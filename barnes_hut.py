@@ -1,3 +1,4 @@
+from quad_node import *
 from vectortools import *
 from atom import *
 import sys
@@ -55,6 +56,26 @@ class Simulator(Simulator):
         self.render = render
         self.count_screen = 0
         self.count_snapshot = 0
+        self.theta = 2
+        self.atom_gravity = Vector(0, 0)
+
+    def force(self, tree, atom, length):
+        if not tree == None:
+            r = atom.pos-tree.pos
+            if r.dot(r)/(length**2) > self.theta**2:
+                self.atom_gravity += -self.world.G*tree.m*(r/abs(r))/(r.dot(r))*self.dt
+                #print(self.atom_gravity)
+                #print(tree)
+            elif tree.nw == None and tree.ne == None and tree.sw == None and tree.se == None and not r.dot(r) == 0:
+                self.atom_gravity += -self.world.G*tree.m*r/((r.dot(r) + softening_length**2)**(3/2))*self.dt
+                #print(self.atom_gravity)
+                #print(r.dot(r))
+            else:
+                self.force(tree.nw, atom, length/2)
+                self.force(tree.ne, atom, length/2)
+                self.force(tree.sw, atom, length/2)
+                self.force(tree.se, atom, length/2)
+                #print(length)
 
     def main(self):
         x_ = []
@@ -67,6 +88,18 @@ class Simulator(Simulator):
             v_.append(new_v)
             x_.append(atom.pos + new_v*self.dt)
 
+        root = QuadNode()
+        make_quad_tree(-1000, -1000, 2000, self.world.atoms, root, self.render.screen)
+        '''
+        # print(root)
+        for atom in self.world.atoms:
+            self.atom_gravity = Vector(0, 0)
+            self.force(root, atom, 2000)
+            new_v = atom.vel + self.atom_gravity*self.dt + self.world.gravity*self.dt
+            v_.append(new_v)
+            x_.append(atom.pos + new_v*self.dt)
+            print(self.atom_gravity)
+        '''
         count = 0
         for atom in self.world.atoms:
             atom.pos = x_[count]
@@ -142,8 +175,8 @@ if __name__ == '__main__':
         # simulator.atom_atom_fusion()
         simulator.draw_atom()
 
-        # render.text('pos = (%.2f, %.2f)'%(atoms[0].pos.x, atoms[0].pos.y) , None, 30, Vector(atoms[0].pos.x -100, atoms[0].pos.y - 30), black)
-        # render.text('vel = (%.2f, %.2f)'%(atoms[0].vel.x, atoms[0].vel.y) , None, 30, Vector(atoms[0].pos.x -100, atoms[0].pos.y - 50), black)
+        render.text('pos = (%.2f, %.2f)'%(atoms[0].pos.x, atoms[0].pos.y) , None, 30, Vector(atoms[0].pos.x -100, atoms[0].pos.y - 30), black)
+        render.text('vel = (%.2f, %.2f)'%(atoms[0].vel.x, atoms[0].vel.y) , None, 30, Vector(atoms[0].pos.x -100, atoms[0].pos.y - 50), black)
 
         # render.text('pos = (%.2f, %.2f)'%(atoms[50].pos.x, atoms[50].pos.y) , None, 30, Vector(atoms[50].pos.x -100, atoms[50].pos.y - 30), blue)
         # render.text('vel = (%.2f, %.2f)'%(atoms[50].vel.x, atoms[50].vel.y) , None, 30, Vector(atoms[50].pos.x -100, atoms[50].pos.y - 50), blue)
@@ -175,7 +208,7 @@ if __name__ == '__main__':
 
         # simulator.save_screen('images/gravity_model_demo_1')
 
-        if t > 20:
+        if t > 10:
             break
 
     import matplotlib.pyplot as plt
