@@ -4,7 +4,7 @@ Created on Sun Jul 23 00:12:54 2023
 
 @author: replica
 """
-from vectortools_np import *
+from vectortools import *
 from atom import *
 import sys
 limit_number = 15000
