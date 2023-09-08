@@ -31,14 +31,16 @@ pypy3 -m pip install pygame
 
 pypy3 -m pip install pillow==9.5.0
 
+pypy3 -m pip install matplotlib
+
+sudo apt install pypy3-dev
+
+pypy3 -m numpy.f2py -c -m test_f test.f90
+
 ![image](https://github.com/junobonnie/Barnes-Hut/blob/main/1k%201k%20(2).gif)
 
 ![image](https://github.com/junobonnie/Barnes-Hut/blob/main/10k%2010.gif)
 
 ![image](https://github.com/junobonnie/Barnes-Hut/blob/main/10k%2010k%2010%2010.gif)
 
-pypy3 -m pip install matplotlib
 
-sudo apt install pypy3-dev
-
-pypy3 -m numpy.f2py -c -m test_f test.f90
