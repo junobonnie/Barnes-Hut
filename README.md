@@ -33,6 +33,10 @@ pypy3 -m pip install pillow==9.5.0
 
 pypy3 -m pip install matplotlib
 
+sudo apt install pkg-config libhdf5-103 libhdf5-dev
+
+pypy3 -m pip install h5py   
+
 sudo apt install pypy3-dev
 
 pypy3 -m numpy.f2py -c -m test_f test.f90
